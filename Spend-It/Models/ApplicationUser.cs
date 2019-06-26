@@ -19,8 +19,8 @@ namespace Spend_It.Models
 
 
         // Set up PK -> FK relationships to other objects
-        //public virtual ICollection<SavedLocation> SavedLocations { get; set; }
+        public virtual ICollection<SavedLocation> SavedLocations { get; set; }
 
-        //public virtual ICollection<Location> Locations { get; set; }
+        public virtual ICollection<Location> Locations { get; set; }
     }
 }
