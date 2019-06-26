@@ -1,5 +1,5 @@
 
-#Spend-It 
+##Spend-It 
 
 A simple ASP.NET Core 2.2 MVC web applications using Entity Framework (EF) Core. 
 
