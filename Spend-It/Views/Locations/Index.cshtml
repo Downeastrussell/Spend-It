@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Spend_It.Models.Location>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            @*<th>
+                @Html.DisplayNameFor(model => model.DateCreated)
+            </th>*@
+            @*<th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.LocationName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StreetAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LocationType)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.DateCreated)
+            </td>*@
+            @*<td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.LocationName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StreetAddress)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.User.Id)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.City.CityName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocationType.LocationTypeName)
+            </td>
+            <td>
+             
+                <a asp-action="Details" asp-route-id="@item.LocationId">Details</a> |
+               
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

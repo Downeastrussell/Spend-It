@@ -20,6 +20,7 @@ namespace Spend_It.Models
 
         [Required]
         [StringLength(255)]
+        [Display(Name = "Short Description")]
         public string Description { get; set; }
 
         [Required]
@@ -28,19 +29,26 @@ namespace Spend_It.Models
         public string LocationName { get; set; }
 
         [Required]
+        [Display(Name = "Street Address")]
+        public string StreetAddress { get; set; }
+
+        [Required]
         public string UserId { get; set; }
 
         [Required]
         public ApplicationUser User { get; set; }
 
         [Required]
+        [Display(Name = "City")]
         public int CityId { get; set; }
-        [Required]
+       
         public City City { get; set; }
 
         [Required]
+        [Display(Name = "Type of Establishment")]
         public int LocationTypeId { get; set; }
-        [Required]
+
+        [Display(Name = "Type of Establishment")]
         public LocationType LocationType { get; set; }
 
 

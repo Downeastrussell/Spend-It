@@ -28,7 +28,7 @@ namespace Spend_It.Data
             modelBuilder.Entity<City>().ToTable("City");
             modelBuilder.Entity<LocationType>().ToTable("LocationType");
             modelBuilder.Entity<PaymentType>().ToTable("PaymentType");
-            modelBuilder.Entity<PaymentTypeLocation>().ToTable("PaymentTypeLocation");
+            //modelBuilder.Entity<PaymentTypeLocation>().ToTable("PaymentTypeLocation");
             modelBuilder.Entity<SavedLocation>().ToTable("SavedLocation");
 
 

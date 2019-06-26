@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spend_It.Data;
 
 namespace Spend_It.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190626185550_redoingLocationModel")]
+    partial class redoingLocationModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -280,6 +282,25 @@ namespace Spend_It.Data.Migrations
                     b.ToTable("PaymentType");
                 });
 
+            modelBuilder.Entity("Spend_It.Models.PaymentTypeLocation", b =>
+                {
+                    b.Property<int>("PaymentTypeLocationId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("LocationId");
+
+                    b.Property<int>("PaymentTypeId");
+
+                    b.HasKey("PaymentTypeLocationId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("PaymentTypeId");
+
+                    b.ToTable("PaymentTypeLocation");
+                });
+
             modelBuilder.Entity("Spend_It.Models.SavedLocation", b =>
                 {
                     b.Property<int>("SavedLocationId")
@@ -369,6 +390,19 @@ namespace Spend_It.Data.Migrations
                     b.HasOne("Spend_It.Models.Location")
                         .WithMany("PaymentTypes")
                         .HasForeignKey("LocationId");
+                });
+
+            modelBuilder.Entity("Spend_It.Models.PaymentTypeLocation", b =>
+                {
+                    b.HasOne("Spend_It.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Spend_It.Models.PaymentType", "PaymentType")
+                        .WithMany()
+                        .HasForeignKey("PaymentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Spend_It.Models.SavedLocation", b =>
