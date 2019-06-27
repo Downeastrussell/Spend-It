@@ -41,3 +41,8 @@ C:\Users\newforce\workspace\backEnd\book5\Spend-It\Spend-It\obj\Debug\netcoreapp
 C:\Users\newforce\workspace\backEnd\book5\Spend-It\Spend-It\obj\Debug\netcoreapp2.2\Razor\Views\Locations\Details.g.cshtml.cs
 C:\Users\newforce\workspace\backEnd\book5\Spend-It\Spend-It\obj\Debug\netcoreapp2.2\Razor\Views\Locations\Edit.g.cshtml.cs
 C:\Users\newforce\workspace\backEnd\book5\Spend-It\Spend-It\obj\Debug\netcoreapp2.2\Razor\Views\Locations\Index.g.cshtml.cs
+C:\Users\newforce\workspace\backEnd\book5\Spend-It\Spend-It\obj\Debug\netcoreapp2.2\Razor\Views\MyLocations\Create.g.cshtml.cs
+C:\Users\newforce\workspace\backEnd\book5\Spend-It\Spend-It\obj\Debug\netcoreapp2.2\Razor\Views\MyLocations\Delete.g.cshtml.cs
+C:\Users\newforce\workspace\backEnd\book5\Spend-It\Spend-It\obj\Debug\netcoreapp2.2\Razor\Views\MyLocations\Details.g.cshtml.cs
+C:\Users\newforce\workspace\backEnd\book5\Spend-It\Spend-It\obj\Debug\netcoreapp2.2\Razor\Views\MyLocations\Edit.g.cshtml.cs
+C:\Users\newforce\workspace\backEnd\book5\Spend-It\Spend-It\obj\Debug\netcoreapp2.2\Razor\Views\MyLocations\Index.g.cshtml.cs
