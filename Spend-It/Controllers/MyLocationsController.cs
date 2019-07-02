@@ -122,6 +122,8 @@ namespace Spend_It.Controllers
             return View(location);
         }
 
+
+        //Populate the Payment Types associated with a Location
         private void PopulateAssignedPaymentTypeData(Location location)
         {
             var allPaymentTypes = _context.PaymentType;
@@ -164,7 +166,7 @@ namespace Spend_It.Controllers
             return View(location);
         }
 
-        // POST: MyLocations/Edit/5
+        // POST -- MYLOCATIONS  -- EDIT
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -182,17 +184,16 @@ namespace Spend_It.Controllers
                     var locationToUpdate = await _context.Locations
                         .Include(i => i.PaymentTypeLocations)
                              .ThenInclude(i => i.PaymentType)
+                         .Include(i => i.PaymentTypeLocations)
+                             .ThenInclude(i => i.Location)
                         .FirstOrDefaultAsync(m => m.LocationId == id);
-                    //_context.Update(location);
-                    //await _context.SaveChangesAsync();
-                    //return RedirectToAction(nameof(Index));
 
-            if (await TryUpdateModelAsync<Location>(
+            if (await TryUpdateModelAsync(
                             locationToUpdate,
                             "",
-                            //i => i.Description,
-                            //i => i.LocationName,
-                            //i => i.Address,
+                            i => i.Description,
+                            i => i.LocationName,
+                            i => i.StreetAddress,
                             i => i.City,
                             i => i.LocationType))
             { 
@@ -207,13 +208,14 @@ namespace Spend_It.Controllers
                         //Log the error (uncomment ex variable name and write a log.)
                         ModelState.AddModelError("", "Unable to save changes. " +
                             "Try again, and if the problem persists, " +
-                            "see your system administrator.");
+                            "see Russell Miller (304)751-5724.");
                     }
                     return RedirectToAction(nameof(Index));
             }
-                
-                UpdatePaymentTypeLocationData(selectedPaymentTypes, locationToUpdate);
+                ViewData["CityId"] = new SelectList(_context.Cities, "CityId", "CityName", location.CityId);
+                ViewData["LocationTypeId"] = new SelectList(_context.LocationTypes, "LocationTypeId", "LocationTypeName", location.LocationTypeId);
                 PopulateAssignedPaymentTypeData(locationToUpdate);
+                UpdatePaymentTypeLocationData(selectedPaymentTypes, locationToUpdate);
                 return View(locationToUpdate);
         }
 
@@ -270,12 +272,12 @@ namespace Spend_It.Controllers
                 return;
             }
 
-            var selectedCoursesHS = new HashSet<string>(selectedPaymentTypes);
+            var selectedPaymentTYpesHS = new HashSet<string>(selectedPaymentTypes);
             var instructorCourses = new HashSet<int>
                 (locationToUpdate.PaymentTypeLocations.Select(c => c.PaymentType.PaymentTypeId));
             foreach (var paymentType in _context.PaymentType)
             {
-                if (selectedCoursesHS.Contains(paymentType.PaymentTypeId.ToString()))
+                if (selectedPaymentTYpesHS.Contains(paymentType.PaymentTypeId.ToString()))
                 {
                     if (!instructorCourses.Contains(paymentType.PaymentTypeId))
                     {
