@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Spend_It.Data;
 using Spend_It.Models;
+using Spend_It.Models.LocationViewModels;
 
 namespace Spend_It.Controllers
 {
@@ -25,16 +26,34 @@ namespace Spend_It.Controllers
         //GET current signed-in user
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
-        // GET: MyLocations--Locations the signed in user has created
-        public async Task<IActionResult> Index()
+        //GET Locations the signed in user has created
+        public async Task<IActionResult> Index(int? id)
         {
             var currentUser = await GetCurrentUserAsync();
-            var applicationDbContext = _context.Locations.Include(l => l.City)
-                .Include(l => l.LocationType)
-                .Include(l => l.User)
-                .Where(l => l.UserId == currentUser.Id);
-            return View(await applicationDbContext.ToListAsync());
+            var viewModel = new PaymentTypeLocationData();
+            viewModel.Locations = await _context.Locations
+                  .Include(i => i.City)
+                  .Include(i => i.LocationType)
+                  .Include(i => i.PaymentTypeLocations)
+                    .ThenInclude(i => i.PaymentType)
+                  .Include(i => i.PaymentTypeLocations)
+                    .ThenInclude(i => i.Location)
+                  .Where(l => l.UserId == currentUser.Id)
+                  .OrderBy(i => i.LocationName)
+
+                  .ToListAsync();
+
+            if (id != null)
+            {
+                ViewData["LocationId"] = id.Value;
+                Location location = viewModel.Locations.Where(
+                    i => i.LocationId == id.Value).Single();
+                viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
+            }
+
+            return View(viewModel);
         }
+
 
         // GET: MyLocations/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -60,9 +79,13 @@ namespace Spend_It.Controllers
         // GET: MyLocations/Create
         public IActionResult Create()
         {
+
+            var location = new Location();
+            location.PaymentTypeLocations = new List<PaymentTypeLocation>();
+            PopulateAssignedPaymentTypeData(location);
             ViewData["CityId"] = new SelectList(_context.Cities, "CityId", "CityName");
             ViewData["LocationTypeId"] = new SelectList(_context.LocationTypes, "LocationTypeId", "LocationTypeName");
-            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
+            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentType, "Id", "Id");
             return View();
         }
 
@@ -71,8 +94,16 @@ namespace Spend_It.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LocationId,DateCreated,Description,LocationName,StreetAddress,UserId,CityId,LocationTypeId")] Location location)
+        public async Task<IActionResult> Create([Bind("LocationId,DateCreated,Description,LocationName,StreetAddress,UserId,CityId,LocationTypeId, PaymentTypeLocation")] Location location, string[] selectedPaymentTypes)
         {
+            {
+                location.PaymentTypeLocations = new List<PaymentTypeLocation>();
+                foreach (var paymentType in selectedPaymentTypes)
+                {
+                    var paymentToAdd = new PaymentTypeLocation { LocationId = location.LocationId, PaymentTypeId = int.Parse(paymentType) };
+                    location.PaymentTypeLocations.Add(paymentToAdd);
+                }
+            }
 
             ModelState.Remove("User");
             ModelState.Remove("UserId");
@@ -85,11 +116,31 @@ namespace Spend_It.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            PopulateAssignedPaymentTypeData(location);
             ViewData["CityId"] = new SelectList(_context.Cities, "CityId", "CityName", location.CityId);
             ViewData["LocationTypeId"] = new SelectList(_context.LocationTypes, "LocationTypeId", "LocationTypeName", location.LocationTypeId);
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", location.UserId);
             return View(location);
         }
+
+        private void PopulateAssignedPaymentTypeData(Location location)
+        {
+            var allPaymentTypes = _context.PaymentType;
+            var locationPaymentTypes = new HashSet<int>(location.PaymentTypeLocations.Select(c => c.PaymentTypeId));
+            var viewModel = new List<AssignedPaymentType>();
+            foreach (var payment in allPaymentTypes)
+            {
+                viewModel.Add(new AssignedPaymentType
+                {
+                    PaymentTypeId = payment.PaymentTypeId,
+                    PaymentTypeTicker = payment.PaymentTypeTicker,
+                    PaymentTypeName = payment.PaymentTypeTicker,
+                    Assigned = locationPaymentTypes.Contains(payment.PaymentTypeId)
+                });
+            }
+            ViewData["PaymentTypes"] = viewModel;
+        }
+
+
 
         // GET: MyLocations/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -99,14 +150,17 @@ namespace Spend_It.Controllers
                 return NotFound();
             }
 
-            var location = await _context.Locations.FindAsync(id);
+            var location = await _context.Locations
+                .Include(i => i.PaymentTypeLocations)
+                    .ThenInclude(i => i.PaymentType)
+                    .FirstOrDefaultAsync(m => m.LocationId == id);
             if (location == null)
             {
                 return NotFound();
             }
             ViewData["CityId"] = new SelectList(_context.Cities, "CityId", "CityName", location.CityId);
             ViewData["LocationTypeId"] = new SelectList(_context.LocationTypes, "LocationTypeId", "LocationTypeName", location.LocationTypeId);
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", location.UserId);
+            PopulateAssignedPaymentTypeData(location);
             return View(location);
         }
 
@@ -115,45 +169,129 @@ namespace Spend_It.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("LocationId,DateCreated,Description,LocationName,StreetAddress,UserId,CityId,LocationTypeId")] Location location)
+        public async Task<IActionResult> Edit(int id, [Bind("LocationId,DateCreated,Description,LocationName,StreetAddress,UserId,CityId,LocationTypeId")] Location location, string[] selectedPaymentTypes)
         {
             if (id != location.LocationId)
             {
                 return NotFound();
             }
 
-            ModelState.Remove("User");
-            ModelState.Remove("UserId");
-  
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
                     var CurrentUser = await GetCurrentUserAsync();
                     location.UserId = CurrentUser.Id;
-                    _context.Update(location);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
 
-                }
-                  catch (DbUpdateConcurrencyException)
+                    var locationToUpdate = await _context.Locations
+                        .Include(i => i.PaymentTypeLocations)
+                             .ThenInclude(i => i.PaymentType)
+                        .FirstOrDefaultAsync(m => m.LocationId == id);
+                    //_context.Update(location);
+                    //await _context.SaveChangesAsync();
+                    //return RedirectToAction(nameof(Index));
+
+            if (await TryUpdateModelAsync<Location>(
+                            locationToUpdate,
+                            "",
+                            //i => i.Description,
+                            //i => i.LocationName,
+                            //i => i.Address,
+                            i => i.City,
+                            i => i.LocationType))
+            { 
+                    UpdatePaymentTypeLocationData(selectedPaymentTypes, locationToUpdate);
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateException /* ex */)
+                    {
+                        //Log the error (uncomment ex variable name and write a log.)
+                        ModelState.AddModelError("", "Unable to save changes. " +
+                            "Try again, and if the problem persists, " +
+                            "see your system administrator.");
+                    }
+                    return RedirectToAction(nameof(Index));
+            }
+                
+                UpdatePaymentTypeLocationData(selectedPaymentTypes, locationToUpdate);
+                PopulateAssignedPaymentTypeData(locationToUpdate);
+                return View(locationToUpdate);
+        }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(int? id, string[] selectedPaymentTypes)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var locationToUpdate = await _context.Locations
+        //        .Include(i => i.PaymentTypeLocations)
+        //            .ThenInclude(i => i.PaymentType)
+        //        .FirstOrDefaultAsync(m => m. == id);
+
+        //    if (await TryUpdateModelAsync<Instructor>(
+        //        instructorToUpdate,
+        //        "",
+        //        i => i.FirstMidName, i => i.LastName, i => i.HireDate, i => i.OfficeAssignment))
+        //    {
+        //        if (String.IsNullOrWhiteSpace(instructorToUpdate.OfficeAssignment?.Location))
+        //        {
+        //            instructorToUpdate.OfficeAssignment = null;
+        //        }
+        //        UpdateInstructorCourses(selectedCourses, instructorToUpdate);
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateException /* ex */)
+        //        {
+        //            //Log the error (uncomment ex variable name and write a log.)
+        //            ModelState.AddModelError("", "Unable to save changes. " +
+        //                "Try again, and if the problem persists, " +
+        //                "see your system administrator.");
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    UpdateInstructorCourses(selectedCourses, instructorToUpdate);
+        //    PopulateAssignedCourseData(instructorToUpdate);
+        //    return View(instructorToUpdate);
+        //}
+
+
+
+        //Special method that updates the join tables when Editing "Accepted PaymentTypes"
+        private void UpdatePaymentTypeLocationData(string[] selectedPaymentTypes, Location locationToUpdate)
+        {
+            if (selectedPaymentTypes == null)
+            {
+                locationToUpdate.PaymentTypeLocations = new List<PaymentTypeLocation>();
+                return;
+            }
+
+            var selectedCoursesHS = new HashSet<string>(selectedPaymentTypes);
+            var instructorCourses = new HashSet<int>
+                (locationToUpdate.PaymentTypeLocations.Select(c => c.PaymentType.PaymentTypeId));
+            foreach (var paymentType in _context.PaymentType)
+            {
+                if (selectedCoursesHS.Contains(paymentType.PaymentTypeId.ToString()))
                 {
-                    if (!LocationExists(location.LocationId))
-                {
-                    return NotFound();
+                    if (!instructorCourses.Contains(paymentType.PaymentTypeId))
+                    {
+                        locationToUpdate.PaymentTypeLocations.Add(new PaymentTypeLocation { LocationId = locationToUpdate.LocationId, PaymentTypeId = paymentType.PaymentTypeId });
+                    }
                 }
                 else
                 {
-                    throw;
+
+                    if (instructorCourses.Contains(paymentType.PaymentTypeId))
+                    {
+                        PaymentTypeLocation paymentTypeToRemove = locationToUpdate.PaymentTypeLocations.FirstOrDefault(i => i.PaymentTypeId == paymentType.PaymentTypeId);
+                        _context.Remove(paymentTypeToRemove);
+                    }
                 }
             }
-
-        }
-            ViewData["CityId"] = new SelectList(_context.Cities, "CityId", "CityName", location.CityId);
-            ViewData["LocationTypeId"] = new SelectList(_context.LocationTypes, "LocationTypeId", "LocationTypeName", location.LocationTypeId);
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", location.UserId);
-            return View(location);
         }
 
         // GET: MyLocations/Delete/5

@@ -1,70 +1,60 @@
-﻿@model IEnumerable<Spend_It.Models.Location>
+﻿@model Spend_It.Models.LocationViewModels.PaymentTypeLocationData
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "MyLocations";
 }
 
-<h1>Index</h1>
+<h2>Created Locations</h2>
 
 <p>
-        <a asp-action="Create">Add a new Locations</a>
-    </p>
+    <a asp-action="Create">Create New</a>
+</p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                    @Html.DisplayNameFor(model => model.DateCreated)
-                </th>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>*@
-            <th>
-                @Html.DisplayNameFor(model => model.LocationName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StreetAddress)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.City)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LocationType)
-            </th>
-            <th></th>
+            <th>Date Created</th>
+            <th>Name of Establishment</th>
+            <th>Type of Establishment</th>
+            <th>City</th>
+            <th>Payment Types Accepted</th>
+         
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Locations)
         {
-            <tr>
-                <td>
-                        @Html.DisplayFor(modelItem => item.DateCreated)
-                    </td>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.LocationName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StreetAddress)
-                </td>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.User.Id)
-                    </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.City.CityName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LocationType.LocationTypeName)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.LocationId">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.LocationId">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.LocationId">Delete</a> |
-
-                </td>
-            </tr>
+            string selectedRow = "";
+            if (item.LocationId == (int?)ViewData["LocationId"])
+            {
+                selectedRow = "success";
+            }
+        <tr class="@selectedRow">
+            <td>
+                @Html.DisplayFor(modelItem => item.DateCreated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocationName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocationType.LocationTypeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City.CityName)
+            </td>
+            <td>
+                @{
+                    foreach (var paymentType in item.PaymentTypeLocations)
+                    {
+                        @paymentType.PaymentType.PaymentTypeName @: - @paymentType.PaymentType.PaymentTypeTicker <br />
+                    }
+                }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.LocationId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.LocationId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.LocationId">Delete</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

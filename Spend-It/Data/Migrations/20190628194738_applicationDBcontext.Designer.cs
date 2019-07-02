@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spend_It.Data;
 
 namespace Spend_It.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190628194738_applicationDBcontext")]
+    partial class applicationDBcontext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -282,7 +284,11 @@ namespace Spend_It.Data.Migrations
 
                     b.Property<int>("LocationId");
 
+                    b.Property<int>("PaymentTypeLocationId");
+
                     b.HasKey("PaymentTypeId", "LocationId");
+
+                    b.HasAlternateKey("PaymentTypeLocationId");
 
                     b.HasIndex("LocationId");
 

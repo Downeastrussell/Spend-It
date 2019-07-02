@@ -19,6 +19,7 @@ namespace Spend_It.Data
         public DbSet<PaymentType> PaymentType { get; set; }
         public DbSet<SavedLocation> SavedLocations { get; set; }
         public DbSet<LocationType> LocationTypes { get; set; }
+        public DbSet<PaymentTypeLocation> PaymentTypeLocations { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -28,7 +29,7 @@ namespace Spend_It.Data
             modelBuilder.Entity<City>().ToTable("City");
             modelBuilder.Entity<LocationType>().ToTable("LocationType");
             modelBuilder.Entity<PaymentType>().ToTable("PaymentType");
-            //modelBuilder.Entity<PaymentTypeLocation>().ToTable("PaymentTypeLocation");
+            modelBuilder.Entity<PaymentTypeLocation>().ToTable("PaymentTypeLocation");
             modelBuilder.Entity<SavedLocation>().ToTable("SavedLocation");
 
 
@@ -40,7 +41,8 @@ namespace Spend_It.Data
                 .Property(b => b.DateCreated)
                 .HasDefaultValueSql("GETDATE()");
 
-
+            modelBuilder.Entity<PaymentTypeLocation>()
+                .HasKey(c => new { c.PaymentTypeId, c.LocationId });
 
         }
     }

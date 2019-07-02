@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spend_It.Data;
 
 namespace Spend_It.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190628165642_viewModelsAdded")]
+    partial class viewModelsAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -278,13 +280,19 @@ namespace Spend_It.Data.Migrations
 
             modelBuilder.Entity("Spend_It.Models.PaymentTypeLocation", b =>
                 {
-                    b.Property<int>("PaymentTypeId");
+                    b.Property<int>("PaymentTypeLocationId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("LocationId");
 
-                    b.HasKey("PaymentTypeId", "LocationId");
+                    b.Property<int>("PaymentTypeId");
+
+                    b.HasKey("PaymentTypeLocationId");
 
                     b.HasIndex("LocationId");
+
+                    b.HasIndex("PaymentTypeId");
 
                     b.ToTable("PaymentTypeLocation");
                 });
