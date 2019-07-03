@@ -14,7 +14,7 @@ namespace Spend_It
 {
     public class Program
     {
-     
+
         public static void Main(string[] args)
         {
             var host = CreateWebHostBuilder(args).Build();

@@ -35,7 +35,7 @@ namespace Spend_It.Models
         [Required]
         public string UserId { get; set; }
 
-        [Required]
+   
         public ApplicationUser User { get; set; }
 
         [Required]
@@ -52,6 +52,6 @@ namespace Spend_It.Models
         public LocationType LocationType { get; set; }
 
 
-        public virtual ICollection<PaymentType> PaymentTypes { get; set; }
+        public ICollection<PaymentTypeLocation> PaymentTypeLocations { get; set; }
     }
 }

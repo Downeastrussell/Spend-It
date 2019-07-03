@@ -13,8 +13,8 @@ namespace Spend_It.Data
         {
             context.Database.EnsureCreated();
 
-            // Look for any Cities.
-            if (context.Cities.Any() || context.LocationTypes.Any() || context.PaymentType.Any())
+            // Look for any join table.
+            if (context.PaymentTypeLocations.Any())
             {
                 return;   // DB has been seeded
             }
@@ -67,6 +67,44 @@ namespace Spend_It.Data
                 context.PaymentType.Add(e);
             }
             context.SaveChanges();
-        }
+
+            var locations = new Location[]
+            {
+                new Location{DateCreated = DateTime.Parse("2012-09-01"), Description = "test1 seed location", LocationName = "Test1 Establishment", StreetAddress = "1 test db", UserId = "5ff79f06-8539-452b-916c-fc8eef723fad", CityId = 1, LocationTypeId = 1 },
+                new Location{DateCreated = DateTime.Parse("2012-09-01"), Description = "test2 seed location", LocationName = "Test2 Establishment", StreetAddress = "2 test db", UserId = "5ff79f06-8539-452b-916c-fc8eef723fad", CityId = 1, LocationTypeId = 1 },
+                new Location{DateCreated = DateTime.Parse("2012-09-01"), Description = "test3 seed location", LocationName = "Test3 Establishment", StreetAddress = "3 test db", UserId = "5ff79f06-8539-452b-916c-fc8eef723fad", CityId = 1, LocationTypeId = 1 }
+            };
+            foreach (Location e in locations)
+            {
+                context.Locations.Add(e);
+            }
+            context.SaveChanges();
+
+
+            var paymentLocation = new PaymentTypeLocation[]
+
+            {
+                new PaymentTypeLocation {
+                    PaymentTypeId = 2,
+                    LocationId = 2
+                    },
+                new PaymentTypeLocation {
+                    PaymentTypeId = 1,
+                    LocationId = 2
+                    },
+                new PaymentTypeLocation {
+                    PaymentTypeId = 3,
+                    LocationId = 3
+                    },
+
+            };
+
+            foreach (PaymentTypeLocation ci in paymentLocation)
+            {
+                context.PaymentTypeLocations.Add(ci);
+            }
+            context.SaveChanges();
+
+        }  
     }
 }

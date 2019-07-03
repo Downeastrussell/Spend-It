@@ -7,6 +7,13 @@
     <RootNamespace>Spend_It</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20190628172805_updatedDBinit.cs" />
+    <Compile Remove="Data\Migrations\20190628172805_updatedDBinit.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190628174217_test.cs" />
+    <Compile Remove="Data\Migrations\20190628174217_test.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />

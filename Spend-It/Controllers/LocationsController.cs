@@ -8,28 +8,43 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Spend_It.Data;
 using Spend_It.Models;
+using Spend_It.Models.LocationViewModels;
 
 namespace Spend_It.Controllers
 {
     public class LocationsController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
-
-        public LocationsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public LocationsController(ApplicationDbContext context)
         {
-            _userManager = userManager;
             _context = context;
         }
 
-        //GET current signed-in user
-        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         // GET: All Locations from every user
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Locations.Include(l => l.City).Include(l => l.LocationType).Include(l => l.User);
-            return View(await applicationDbContext.ToListAsync());
+        public async Task<IActionResult> Index(int? id)
+        {         
+            var viewModel = new PaymentTypeLocationData();
+            viewModel.Locations = await _context.Locations
+                  .Include(i => i.City)
+                  .Include(i => i.LocationType)
+                  .Include(i => i.PaymentTypeLocations)
+                    .ThenInclude(i => i.PaymentType)
+                  .Include(i => i.PaymentTypeLocations)
+                    .ThenInclude(i => i.Location)
+                  .OrderBy(i => i.City)
+
+                  .ToListAsync();
+
+            if (id != null)
+            {
+                ViewData["LocationId"] = id.Value;
+                Location location = viewModel.Locations.Where(
+                    i => i.LocationId == id.Value).Single();
+                viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
+            }
+
+            return View(viewModel);
         }
 
 
@@ -53,40 +68,6 @@ namespace Spend_It.Controllers
 
             return View(location);
         }
-
-        //// GET: Locations/Create
-        //public IActionResult Create()
-        //{
-        //    ViewData["CityId"] = new SelectList(_context.Cities, "CityId", "CityName");
-        //    ViewData["LocationTypeId"] = new SelectList(_context.LocationTypes, "LocationTypeId", "LocationTypeName");
-        //    //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
-        //    return View();
-        //}
-
-        //// POST: Locations/Create
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("LocationId,DateCreated,Description,LocationName,StreetAddress,UserId,CityId,LocationTypeId")] Location location)
-        //{
-
-        //    ModelState.Remove("User");
-        //    ModelState.Remove("UserId");
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        var CurrentUser = await GetCurrentUserAsync();
-        //        location.UserId = CurrentUser.Id;
-        //        _context.Add(location);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    ViewData["CityId"] = new SelectList(_context.Cities, "CityId", "CityName", location.CityId);
-        //    ViewData["LocationTypeId"] = new SelectList(_context.LocationTypes, "LocationTypeId", "LocationTypeName", location.LocationTypeId);
-        //    ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", location.UserId);
-        //    return View(location);
-        //}
 
       
     }

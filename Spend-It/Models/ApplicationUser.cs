@@ -17,7 +17,6 @@ namespace Spend_It.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
-
         // Set up PK -> FK relationships to other objects
         public virtual ICollection<SavedLocation> SavedLocations { get; set; }
 
