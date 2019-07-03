@@ -85,7 +85,6 @@ namespace Spend_It.Controllers
             PopulateAssignedPaymentTypeData(location);
             ViewData["CityId"] = new SelectList(_context.Cities, "CityId", "CityName");
             ViewData["LocationTypeId"] = new SelectList(_context.LocationTypes, "LocationTypeId", "LocationTypeName");
-            ViewData["PaymentTypeId"] = new SelectList(_context.PaymentType, "Id", "Id");
             return View();
         }
 
@@ -123,24 +122,6 @@ namespace Spend_It.Controllers
         }
 
 
-        //Populate the Payment Types associated with a Location
-        private void PopulateAssignedPaymentTypeData(Location location)
-        {
-            var allPaymentTypes = _context.PaymentType;
-            var locationPaymentTypes = new HashSet<int>(location.PaymentTypeLocations.Select(c => c.PaymentTypeId));
-            var viewModel = new List<AssignedPaymentType>();
-            foreach (var payment in allPaymentTypes)
-            {
-                viewModel.Add(new AssignedPaymentType
-                {
-                    PaymentTypeId = payment.PaymentTypeId,
-                    PaymentTypeTicker = payment.PaymentTypeTicker,
-                    PaymentTypeName = payment.PaymentTypeTicker,
-                    Assigned = locationPaymentTypes.Contains(payment.PaymentTypeId)
-                });
-            }
-            ViewData["PaymentTypes"] = viewModel;
-        }
 
 
 
@@ -169,25 +150,27 @@ namespace Spend_It.Controllers
         // POST -- MYLOCATIONS  -- EDIT
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("LocationId,DateCreated,Description,LocationName,StreetAddress,UserId,CityId,LocationTypeId")] Location location, string[] selectedPaymentTypes)
+        //[Bind("LocationId,DateCreated,Description,LocationName,StreetAddress,UserId,CityId,LocationTypeId, PaymentTypeLocation")]
+        public async Task<IActionResult> Edit(int id,   string[] selectedPaymentTypes)
         {
-            if (id != location.LocationId)
+            if (id == null)
             {
                 return NotFound();
             }
 
-                    var CurrentUser = await GetCurrentUserAsync();
-                    location.UserId = CurrentUser.Id;
+            var CurrentUser = await GetCurrentUserAsync();
+            //location.UserId = CurrentUser.Id;
 
-                    var locationToUpdate = await _context.Locations
+            var locationToUpdate = await _context.Locations
+                        
                         .Include(i => i.PaymentTypeLocations)
                              .ThenInclude(i => i.PaymentType)
                          .Include(i => i.PaymentTypeLocations)
                              .ThenInclude(i => i.Location)
                         .FirstOrDefaultAsync(m => m.LocationId == id);
-
+            locationToUpdate.UserId = CurrentUser.Id;
             if (await TryUpdateModelAsync(
                             locationToUpdate,
                             "",
@@ -196,74 +179,33 @@ namespace Spend_It.Controllers
                             i => i.StreetAddress,
                             i => i.City,
                             i => i.LocationType))
-            { 
-                    UpdatePaymentTypeLocationData(selectedPaymentTypes, locationToUpdate);
+            {
+                UpdatePaymentTypeLocationData(selectedPaymentTypes, locationToUpdate);
 
-                    try
+
+                try
                     {
                         await _context.SaveChangesAsync();
                     }
-                    catch (DbUpdateException /* ex */)
+                    catch (DbUpdateException)
                     {
-                        //Log the error (uncomment ex variable name and write a log.)
+                        //Log a generic error message if edit fails to update DB
                         ModelState.AddModelError("", "Unable to save changes. " +
                             "Try again, and if the problem persists, " +
                             "see Russell Miller (304)751-5724.");
                     }
                     return RedirectToAction(nameof(Index));
             }
-                ViewData["CityId"] = new SelectList(_context.Cities, "CityId", "CityName", location.CityId);
-                ViewData["LocationTypeId"] = new SelectList(_context.LocationTypes, "LocationTypeId", "LocationTypeName", location.LocationTypeId);
-                PopulateAssignedPaymentTypeData(locationToUpdate);
                 UpdatePaymentTypeLocationData(selectedPaymentTypes, locationToUpdate);
+                PopulateAssignedPaymentTypeData(locationToUpdate);             
+                ViewData["CityId"] = new SelectList(_context.Cities, "CityId", "CityName", locationToUpdate.CityId);
+                ViewData["LocationTypeId"] = new SelectList(_context.LocationTypes, "LocationTypeId", "LocationTypeName", locationToUpdate.LocationTypeId);
+
                 return View(locationToUpdate);
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int? id, string[] selectedPaymentTypes)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    var locationToUpdate = await _context.Locations
-        //        .Include(i => i.PaymentTypeLocations)
-        //            .ThenInclude(i => i.PaymentType)
-        //        .FirstOrDefaultAsync(m => m. == id);
-
-        //    if (await TryUpdateModelAsync<Instructor>(
-        //        instructorToUpdate,
-        //        "",
-        //        i => i.FirstMidName, i => i.LastName, i => i.HireDate, i => i.OfficeAssignment))
-        //    {
-        //        if (String.IsNullOrWhiteSpace(instructorToUpdate.OfficeAssignment?.Location))
-        //        {
-        //            instructorToUpdate.OfficeAssignment = null;
-        //        }
-        //        UpdateInstructorCourses(selectedCourses, instructorToUpdate);
-        //        try
-        //        {
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateException /* ex */)
-        //        {
-        //            //Log the error (uncomment ex variable name and write a log.)
-        //            ModelState.AddModelError("", "Unable to save changes. " +
-        //                "Try again, and if the problem persists, " +
-        //                "see your system administrator.");
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    UpdateInstructorCourses(selectedCourses, instructorToUpdate);
-        //    PopulateAssignedCourseData(instructorToUpdate);
-        //    return View(instructorToUpdate);
-        //}
-
-
-
-        //Special method that updates the join tables when Editing "Accepted PaymentTypes"
+        //Special method that updates the join tables on the Location being updated in the Edit view of MyLocation
         private void UpdatePaymentTypeLocationData(string[] selectedPaymentTypes, Location locationToUpdate)
         {
             if (selectedPaymentTypes == null)
@@ -273,13 +215,13 @@ namespace Spend_It.Controllers
             }
 
             var selectedPaymentTYpesHS = new HashSet<string>(selectedPaymentTypes);
-            var instructorCourses = new HashSet<int>
+            var preEditPaymentTypes = new HashSet<int>
                 (locationToUpdate.PaymentTypeLocations.Select(c => c.PaymentType.PaymentTypeId));
             foreach (var paymentType in _context.PaymentType)
             {
                 if (selectedPaymentTYpesHS.Contains(paymentType.PaymentTypeId.ToString()))
                 {
-                    if (!instructorCourses.Contains(paymentType.PaymentTypeId))
+                    if (!preEditPaymentTypes.Contains(paymentType.PaymentTypeId))
                     {
                         locationToUpdate.PaymentTypeLocations.Add(new PaymentTypeLocation { LocationId = locationToUpdate.LocationId, PaymentTypeId = paymentType.PaymentTypeId });
                     }
@@ -287,7 +229,7 @@ namespace Spend_It.Controllers
                 else
                 {
 
-                    if (instructorCourses.Contains(paymentType.PaymentTypeId))
+                    if (preEditPaymentTypes.Contains(paymentType.PaymentTypeId))
                     {
                         PaymentTypeLocation paymentTypeToRemove = locationToUpdate.PaymentTypeLocations.FirstOrDefault(i => i.PaymentTypeId == paymentType.PaymentTypeId);
                         _context.Remove(paymentTypeToRemove);
@@ -295,6 +237,30 @@ namespace Spend_It.Controllers
                 }
             }
         }
+
+        //Populate the Payment Types associated with a Location
+        private void PopulateAssignedPaymentTypeData(Location location)
+        {
+            var allPaymentTypes = _context.PaymentType;
+            var locationPaymentTypes = new HashSet<int>(location.PaymentTypeLocations.Select(c => c.PaymentTypeId));
+            var viewModel = new List<AssignedPaymentType>();
+            foreach (var payment in allPaymentTypes)
+            {
+                viewModel.Add(new AssignedPaymentType
+                {
+                    PaymentTypeId = payment.PaymentTypeId,
+                    PaymentTypeTicker = payment.PaymentTypeTicker,
+                    PaymentTypeName = payment.PaymentTypeTicker,
+                    Assigned = locationPaymentTypes.Contains(payment.PaymentTypeId)
+                });
+            }
+            ViewData["PaymentTypes"] = viewModel;
+        }
+
+
+
+
+
 
         // GET: MyLocations/Delete/5
         public async Task<IActionResult> Delete(int? id)
