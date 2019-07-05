@@ -15,10 +15,15 @@ namespace Spend_It.Controllers
     public class LocationsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        public LocationsController(ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public LocationsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
+            _userManager = userManager;
             _context = context;
         }
+
+        //GET current signed-in user
+        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
 
         // GET: All Locations from every user
@@ -46,6 +51,40 @@ namespace Spend_It.Controllers
 
             return View(viewModel);
         }
+
+
+        //Add to "Saved Locations" (thanks to Sable Bowen!!!)
+        [HttpGet]
+        //[ValidateAntiForgeryToken]
+
+        public async Task<IActionResult> AddToSavedLocation(int id)
+        {
+
+            //Gets user, products in cart, and the currently open order
+            var currentUser = await GetCurrentUserAsync();
+
+            var location = await _context.Locations.FirstOrDefaultAsync(p => p.LocationId == id);
+
+            IEnumerable<SavedLocation> locations = await _context.SavedLocations.Where(o => o.UserId == currentUser.Id).ToListAsync();
+
+     
+
+                //_context.Add(locations);
+                //await _context.SaveChangesAsync();
+                SavedLocation saved = new SavedLocation()
+                {
+                    LocationId = location.LocationId,
+                    UserId = currentUser.Id
+                };
+                _context.Add(saved);
+                await _context.SaveChangesAsync();
+
+
+         
+
+            return View(locations);
+        }
+
 
 
         // GET: Locations/Details/5

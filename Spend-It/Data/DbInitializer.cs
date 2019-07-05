@@ -68,18 +68,6 @@ namespace Spend_It.Data
             }
             context.SaveChanges();
 
-            var locations = new Location[]
-            {
-                new Location{DateCreated = DateTime.Parse("2012-09-01"), Description = "test1 seed location", LocationName = "Test1 Establishment", StreetAddress = "1 test db", UserId = "5ff79f06-8539-452b-916c-fc8eef723fad", CityId = 1, LocationTypeId = 1 },
-                new Location{DateCreated = DateTime.Parse("2012-09-01"), Description = "test2 seed location", LocationName = "Test2 Establishment", StreetAddress = "2 test db", UserId = "5ff79f06-8539-452b-916c-fc8eef723fad", CityId = 1, LocationTypeId = 1 },
-                new Location{DateCreated = DateTime.Parse("2012-09-01"), Description = "test3 seed location", LocationName = "Test3 Establishment", StreetAddress = "3 test db", UserId = "5ff79f06-8539-452b-916c-fc8eef723fad", CityId = 1, LocationTypeId = 1 }
-            };
-            foreach (Location e in locations)
-            {
-                context.Locations.Add(e);
-            }
-            context.SaveChanges();
-
 
             var paymentLocation = new PaymentTypeLocation[]
 

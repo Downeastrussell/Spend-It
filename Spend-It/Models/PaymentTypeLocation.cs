@@ -18,6 +18,6 @@ namespace Spend_It.Models
         [Required]
         public int LocationId { get; set; }
         public Location Location { get; set; }
-        //public object payment { get; internal set; }
+     
     }
 }

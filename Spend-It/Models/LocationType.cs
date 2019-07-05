@@ -15,5 +15,7 @@ namespace Spend_It.Models
         [Display(Name = "Type of Establishment")]
         [StringLength(55, ErrorMessage = "Please shorten the Location Type Name to 55 characters")]
         public string LocationTypeName { get; set; }
+
+        
     }
 }

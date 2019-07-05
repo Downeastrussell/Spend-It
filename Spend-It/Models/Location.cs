@@ -53,5 +53,6 @@ namespace Spend_It.Models
 
 
         public ICollection<PaymentTypeLocation> PaymentTypeLocations { get; set; }
+        public ICollection<SavedLocation> SavedLocations { get; set; }
     }
 }
