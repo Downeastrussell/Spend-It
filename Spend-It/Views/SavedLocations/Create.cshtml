@@ -1,4 +1,4 @@
-﻿@model Spend_It.Models.Location
+﻿@model Spend_It.Models.SavedLocation
 
 @{
     ViewData["Title"] = "Create";
@@ -6,44 +6,19 @@
 
 <h1>Create</h1>
 
-<h4>Location</h4>
+<h4>SavedLocation</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
+
+
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LocationName" class="control-label"></label>
-                <input asp-for="LocationName" class="form-control" />
-                <span asp-validation-for="LocationName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StreetAddress" class="control-label"></label>
-                <input asp-for="StreetAddress" class="form-control" />
-                <span asp-validation-for="StreetAddress" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CityId" class="control-label"></label>
-                <select asp-for="CityId" class ="form-control" asp-items="ViewBag.CityId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="LocationTypeId" class="control-label"></label>
-                <select asp-for="LocationTypeId" class ="form-control" asp-items="ViewBag.LocationTypeId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="LocationId" />
+            <input type="submit" value="Save" class="btn btn-primary" /> |
+
         </form>
-    </div>
+</div>
 </div>
 
 <div>

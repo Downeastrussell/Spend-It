@@ -28,7 +28,9 @@ namespace Spend_It.Controllers
 
         // GET: All Locations from every user
         public async Task<IActionResult> Index(int? id)
-        {         
+        {
+
+ 
             var viewModel = new PaymentTypeLocationData();
             viewModel.Locations = await _context.Locations
                   .Include(i => i.City)
