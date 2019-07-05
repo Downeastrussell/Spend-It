@@ -7,6 +7,10 @@ namespace Spend_It.Models.LocationViewModels
 {
     public class SavedLocationIndexData
     {
-        public IEnumerable<SavedLocationLineItem> SavedLocationLineItems { get; set; }
+        //public IEnumerable<SavedLocationLineItem> SavedLocationLineItems { get; set; 
+        public IEnumerable<Location> Locations { get; set; }
+        public IEnumerable<PaymentType> PaymentTypes { get; set; }
+        public IEnumerable<SavedLocation> SavedLocations { get; set; }
+
     }
 }

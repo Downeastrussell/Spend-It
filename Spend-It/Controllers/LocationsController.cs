@@ -55,7 +55,7 @@ namespace Spend_It.Controllers
 
         //Add to "Saved Locations" (thanks to Sable Bowen!!!)
         [HttpGet]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
 
         public async Task<IActionResult> AddToSavedLocation(int id)
         {
@@ -67,10 +67,7 @@ namespace Spend_It.Controllers
 
             IEnumerable<SavedLocation> locations = await _context.SavedLocations.Where(o => o.UserId == currentUser.Id).ToListAsync();
 
-     
-
-                //_context.Add(locations);
-                //await _context.SaveChangesAsync();
+    
                 SavedLocation saved = new SavedLocation()
                 {
                     LocationId = location.LocationId,
@@ -82,7 +79,7 @@ namespace Spend_It.Controllers
 
          
 
-            return View(locations);
+            return View();
         }
 
 
