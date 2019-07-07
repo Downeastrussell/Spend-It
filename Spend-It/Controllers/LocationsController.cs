@@ -59,20 +59,21 @@ namespace Spend_It.Controllers
         [HttpGet]
         [ValidateAntiForgeryToken]
 
-        public async Task<IActionResult> AddToSavedLocation(int id)
+        public async Task<IActionResult> AddToSavedLocations(int id)
         {
 
             //Gets user, products in cart, and the currently open order
             var currentUser = await GetCurrentUserAsync();
 
+
             var location = await _context.Locations.FirstOrDefaultAsync(p => p.LocationId == id);
 
-            IEnumerable<SavedLocation> locations = await _context.SavedLocations.Where(o => o.UserId == currentUser.Id).ToListAsync();
+            //IEnumerable<SavedLocation> locations = await _context.SavedLocations.Where(o => o.UserId == currentUser.Id).ToListAsync();
 
     
                 SavedLocation saved = new SavedLocation()
                 {
-                    LocationId = location.LocationId,
+                    LocationId = id,
                     UserId = currentUser.Id
                 };
                 _context.Add(saved);
@@ -81,7 +82,7 @@ namespace Spend_It.Controllers
 
          
 
-            return View();
+            return View(location);
         }
 
 
