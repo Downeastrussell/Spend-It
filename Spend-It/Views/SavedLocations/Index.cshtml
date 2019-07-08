@@ -1,0 +1,58 @@
+﻿
+@model Spend_It.Models.LocationViewModels.SavedLocationIndexData
+
+@{
+    ViewData["Title"] = "SavedLocations";
+}
+
+<h2>Your Saved Locations</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name of Establishment</th>
+            <th>Type of Establishment</th>
+            <th>Street Address</th>
+            <th>City</th>
+            <th>Payment Types Accepted</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.SavedLocations)
+        {
+            string selectedRow = "";
+            if (item.LocationId == (int?)ViewData["LocationId"])
+            {
+                selectedRow = "success";
+            }
+            <tr class="@selectedRow">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location.LocationName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location.LocationType.LocationTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location.StreetAddress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location.City.CityName)
+                </td>
+                <td>
+                    @{
+                        foreach (var paymentType in item.Location.PaymentTypeLocations)
+                        {
+                            @paymentType.PaymentType.PaymentTypeName @: -  @paymentType.PaymentType.PaymentTypeTicker <br />
+                        }
+                    }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.SavedLocationId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.SavedLocationId">Delete</a>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

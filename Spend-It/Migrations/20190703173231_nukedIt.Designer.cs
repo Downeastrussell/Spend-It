@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spend_It.Data;
 
-namespace Spend_It.Data.Migrations
+namespace Spend_It.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190628155046_update-models")]
-    partial class updatemodels
+    [Migration("20190703173231_nukedIt")]
+    partial class nukedIt
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -256,6 +256,8 @@ namespace Spend_It.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(55);
 
+                    b.Property<string>("sneakyStuff");
+
                     b.HasKey("LocationTypeId");
 
                     b.ToTable("LocationType");
@@ -267,8 +269,6 @@ namespace Spend_It.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("LocationId");
-
                     b.Property<string>("PaymentTypeName")
                         .IsRequired()
                         .HasMaxLength(55);
@@ -277,26 +277,18 @@ namespace Spend_It.Data.Migrations
 
                     b.HasKey("PaymentTypeId");
 
-                    b.HasIndex("LocationId");
-
                     b.ToTable("PaymentType");
                 });
 
             modelBuilder.Entity("Spend_It.Models.PaymentTypeLocation", b =>
                 {
-                    b.Property<int>("PaymentTypeLocationId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<int>("PaymentTypeId");
 
                     b.Property<int>("LocationId");
 
-                    b.Property<int>("PaymentTypeId");
-
-                    b.HasKey("PaymentTypeLocationId");
+                    b.HasKey("PaymentTypeId", "LocationId");
 
                     b.HasIndex("LocationId");
-
-                    b.HasIndex("PaymentTypeId");
 
                     b.ToTable("PaymentTypeLocation");
                 });
@@ -309,15 +301,13 @@ namespace Spend_It.Data.Migrations
 
                     b.Property<int>("LocationId");
 
-                    b.Property<int>("UserId");
-
-                    b.Property<string>("UserId1");
+                    b.Property<string>("UserId");
 
                     b.HasKey("SavedLocationId");
 
                     b.HasIndex("LocationId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("SavedLocation");
                 });
@@ -385,17 +375,10 @@ namespace Spend_It.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Spend_It.Models.PaymentType", b =>
-                {
-                    b.HasOne("Spend_It.Models.Location")
-                        .WithMany("PaymentTypes")
-                        .HasForeignKey("LocationId");
-                });
-
             modelBuilder.Entity("Spend_It.Models.PaymentTypeLocation", b =>
                 {
                     b.HasOne("Spend_It.Models.Location", "Location")
-                        .WithMany()
+                        .WithMany("PaymentTypeLocations")
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -414,7 +397,7 @@ namespace Spend_It.Data.Migrations
 
                     b.HasOne("Spend_It.Models.ApplicationUser", "User")
                         .WithMany("SavedLocations")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

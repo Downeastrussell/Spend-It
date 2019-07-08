@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spend_It.Models.LocationViewModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -53,5 +54,7 @@ namespace Spend_It.Models
 
 
         public ICollection<PaymentTypeLocation> PaymentTypeLocations { get; set; }
+        public virtual ICollection<SavedLocation> SavedLocations { get; set; }
+
     }
 }

@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spend_It.Data;
 
-namespace Spend_It.Data.Migrations
+namespace Spend_It.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190626170033_modelsCreated")]
-    partial class modelsCreated
+    [Migration("20190707172434_savedocations")]
+    partial class savedocations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -229,6 +229,9 @@ namespace Spend_It.Data.Migrations
 
                     b.Property<int>("LocationTypeId");
 
+                    b.Property<string>("StreetAddress")
+                        .IsRequired();
+
                     b.Property<string>("UserId")
                         .IsRequired();
 
@@ -264,8 +267,6 @@ namespace Spend_It.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("LocationId");
-
                     b.Property<string>("PaymentTypeName")
                         .IsRequired()
                         .HasMaxLength(55);
@@ -274,26 +275,18 @@ namespace Spend_It.Data.Migrations
 
                     b.HasKey("PaymentTypeId");
 
-                    b.HasIndex("LocationId");
-
                     b.ToTable("PaymentType");
                 });
 
             modelBuilder.Entity("Spend_It.Models.PaymentTypeLocation", b =>
                 {
-                    b.Property<int>("PaymentTypeLocationId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<int>("PaymentTypeId");
 
                     b.Property<int>("LocationId");
 
-                    b.Property<int>("PaymentTypeId");
-
-                    b.HasKey("PaymentTypeLocationId");
+                    b.HasKey("PaymentTypeId", "LocationId");
 
                     b.HasIndex("LocationId");
-
-                    b.HasIndex("PaymentTypeId");
 
                     b.ToTable("PaymentTypeLocation");
                 });
@@ -304,17 +297,17 @@ namespace Spend_It.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("LocationId");
+                    b.Property<int?>("LocationId");
 
-                    b.Property<int>("UserId");
+                    b.Property<string>("UserId");
 
-                    b.Property<string>("UserId1");
+                    b.Property<int>("savedLocationId");
 
                     b.HasKey("SavedLocationId");
 
                     b.HasIndex("LocationId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("SavedLocation");
                 });
@@ -382,17 +375,10 @@ namespace Spend_It.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Spend_It.Models.PaymentType", b =>
-                {
-                    b.HasOne("Spend_It.Models.Location")
-                        .WithMany("PaymentTypes")
-                        .HasForeignKey("LocationId");
-                });
-
             modelBuilder.Entity("Spend_It.Models.PaymentTypeLocation", b =>
                 {
                     b.HasOne("Spend_It.Models.Location", "Location")
-                        .WithMany()
+                        .WithMany("PaymentTypeLocations")
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -406,12 +392,11 @@ namespace Spend_It.Data.Migrations
                 {
                     b.HasOne("Spend_It.Models.Location", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("Spend_It.Models.ApplicationUser", "User")
                         .WithMany("SavedLocations")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spend_It.Data;
 
-namespace Spend_It.Data.Migrations
+namespace Spend_It.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190701153843_changedModel-PaymentTypeLocation")]
-    partial class changedModelPaymentTypeLocation
+    [Migration("20190703173500_pleaseWorkASPNETHOLE")]
+    partial class pleaseWorkASPNETHOLE
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -299,15 +299,13 @@ namespace Spend_It.Data.Migrations
 
                     b.Property<int>("LocationId");
 
-                    b.Property<int>("UserId");
-
-                    b.Property<string>("UserId1");
+                    b.Property<string>("UserId");
 
                     b.HasKey("SavedLocationId");
 
                     b.HasIndex("LocationId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("SavedLocation");
                 });
@@ -397,7 +395,7 @@ namespace Spend_It.Data.Migrations
 
                     b.HasOne("Spend_It.Models.ApplicationUser", "User")
                         .WithMany("SavedLocations")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }
