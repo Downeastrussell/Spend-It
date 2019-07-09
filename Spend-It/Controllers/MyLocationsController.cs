@@ -35,6 +35,7 @@ namespace Spend_It.Controllers
 
             ViewData["CurrentSort"] = sortOrder;
             ViewData["CurrentFilter"] = searchString;
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["CitySortParm"] = String.IsNullOrEmpty(sortOrder) ? "CityName_desc" : "CityName";
 
@@ -62,6 +63,12 @@ namespace Spend_It.Controllers
                 case "CityName_desc":
                     viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.City.CityName);
                     break;
+                case "Date":
+                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.DateCreated);
+                    break;
+                case "date_desc":
+                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.DateCreated);
+                    break;
                 default:
                     viewModel.Locations = viewModel.Locations.OrderBy(s => s.City.CityName);
                     break;
@@ -70,13 +77,13 @@ namespace Spend_It.Controllers
 
 
 
-            if (id != null)
-            {
-                ViewData["LocationId"] = id.Value;
-                Location location = viewModel.Locations.Where(
-                    i => i.LocationId == id.Value).Single();
-                viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
-            }
+            //if (id != null)
+            //{
+            //    ViewData["LocationId"] = id.Value;
+            //    Location location = viewModel.Locations.Where(
+            //        i => i.LocationId == id.Value).Single();
+            //    viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
+            //}
 
             if (!String.IsNullOrEmpty(searchString))
             {

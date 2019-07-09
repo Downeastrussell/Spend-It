@@ -45,13 +45,13 @@ namespace Spend_It.Controllers
                 .Where(l => l.UserId == currentUser.Id)
                 .ToListAsync();
 
-            if (id != null)
-            {
-                ViewData["LocationId"] = id.Value;
-                SavedLocation location = viewModel.SavedLocations.Where(
-                   i => i.LocationId == id.Value).Single();
-                //viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
-            }
+            //if (id != null)
+            //{
+            //    ViewData["LocationId"] = id.Value;
+            //    SavedLocation location = viewModel.SavedLocations.Where(
+            //       i => i.LocationId == id.Value).Single();
+            //    //viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
+            //}
 
             return View(viewModel);
         }

@@ -68,13 +68,13 @@ namespace Spend_It.Controllers
             }
 
 
-            if (id != null)
-            {
-                ViewData["LocationId"] = id.Value;
-                Location location = viewModel.Locations.Where(
-                    i => i.LocationId == id.Value).Single();
-                viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
-            }
+            //if (id != null)
+            //{
+            //    ViewData["LocationId"] = id.Value;
+            //    Location location = viewModel.Locations.Where(
+            //        i => i.LocationId == id.Value).Single();
+            //    viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
+            //}
 
             if (!String.IsNullOrEmpty(searchString))
             {
