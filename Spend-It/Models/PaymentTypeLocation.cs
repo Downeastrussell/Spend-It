@@ -8,9 +8,6 @@ namespace Spend_It.Models
 {
     public class PaymentTypeLocation
     {
-        //[Key]
-        //[Required]
-        //public int PaymentTypeLocationId { get; set; }
         [Required]
         public int PaymentTypeId { get; set; }
         public PaymentType PaymentType { get; set; }

@@ -28,16 +28,16 @@ namespace Spend_It.Controllers
 
         // GET: SavedLocations
         public async Task<IActionResult> Index(
-            int? id,
+            //int? id,
               string sortOrder,
             string searchString
             )
         {
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["CurrentFilter"] = searchString;
+            
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["CitySortParm"] = String.IsNullOrEmpty(sortOrder) ? "CityName_desc" : "CityName";
-
+            ViewData["CurrentFilter"] = searchString;
 
             var currentUser = await GetCurrentUserAsync();
             var viewModel = new SavedLocationIndexData();
@@ -71,18 +71,10 @@ namespace Spend_It.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                viewModel.Locations = viewModel.Locations.Where(s => s.City.CityName.Contains(searchString)
-                                       || s.City.CityName.Contains(searchString) || s.Description.Contains(searchString)).ToList();
+                viewModel.SavedLocations = viewModel.SavedLocations.Where(s => s.Location.City.CityName.Contains(searchString)
+                                       || s.Location.City.CityName.Contains(searchString) || s.Location.Description.Contains(searchString));
 
             }
-
-            //if (id != null)
-            //{
-            //    ViewData["LocationId"] = id.Value;
-            //    SavedLocation location = viewModel.SavedLocations.Where(
-            //       i => i.LocationId == id.Value).Single();
-            //    //viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
-            //}
 
             return View(viewModel);
         }
@@ -143,8 +135,7 @@ namespace Spend_It.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LocationId"] = new SelectList(_context.Locations, "LocationId", "Description", savedLocation.LocationId);
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", savedLocation.UserId);
+
             return View(savedLocation);
         }
 

@@ -10,11 +10,8 @@ namespace Spend_It.Models
     {   [Key]
         [Required]
         public int SavedLocationId { get; set; }
-
         public string UserId { get; set; }
         public ApplicationUser User { get; set; }
-
-
         public int LocationId { get; set; }
         public Location Location { get; set; }
     }

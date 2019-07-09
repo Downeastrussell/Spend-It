@@ -28,7 +28,7 @@ namespace Spend_It.Controllers
 
         //GET Locations the signed in user has created
         public async Task<IActionResult> Index(
-            int? id,
+            //int? id,
             string sortOrder,
             string searchString)
         {
@@ -297,11 +297,6 @@ namespace Spend_It.Controllers
             }
             ViewData["PaymentTypes"] = viewModel;
         }
-
-
-
-
-
 
         // GET: MyLocations/Delete/5
         public async Task<IActionResult> Delete(int? id)
