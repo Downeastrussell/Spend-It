@@ -22,13 +22,18 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Date Created</a>
-            </th>
+            <th>Date Created</th>
+
             <th> <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Name of Establishment</a></th>
+
             <th>Type of Establishment</th>
+
+            <th>Street Address</th>
+
             <th> <a asp-action="Index" asp-route-sortOrder="@ViewData["CitySortParm"]">City</a></th>
+
             <th>Payment Types Accepted</th>
+
 
         </tr>
     </thead>
@@ -51,8 +56,12 @@
                 @Html.DisplayFor(modelItem => item.LocationType.LocationTypeName)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.StreetAddress)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.City.CityName)
             </td>
+
             <td>
                 @{
                     foreach (var paymentType in item.PaymentTypeLocations)

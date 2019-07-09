@@ -35,7 +35,6 @@ namespace Spend_It.Controllers
 
             ViewData["CurrentSort"] = sortOrder;
             ViewData["CurrentFilter"] = searchString;
-            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["CitySortParm"] = String.IsNullOrEmpty(sortOrder) ? "CityName_desc" : "CityName";
 
@@ -50,31 +49,26 @@ namespace Spend_It.Controllers
                   .Include(i => i.PaymentTypeLocations)
                     .ThenInclude(i => i.Location)
                   .Where(l => l.UserId == currentUser.Id)
-                  .OrderBy(i => i.City.CityName)
                    .ToListAsync();
-                 
 
             switch (sortOrder)
             {
                 case "name_desc":
-                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.LocationName).ToList();
+                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.LocationName);
                     break;
                 case "CityName":
-                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.City.CityName).ToList();
+                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.City.CityName);
                     break;
                 case "CityName_desc":
-                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.City.CityName).ToList();
-                    break;
-                case "Date":
-                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.DateCreated).ToList();
-                    break;
-                case "date_desc":
-                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.DateCreated).ToList();
+                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.City.CityName);
                     break;
                 default:
-                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.City).ToList();
+                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.City.CityName);
                     break;
             }
+
+
+
 
             if (id != null)
             {
@@ -83,6 +77,7 @@ namespace Spend_It.Controllers
                     i => i.LocationId == id.Value).Single();
                 viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
             }
+
             if (!String.IsNullOrEmpty(searchString))
             {
                 viewModel.Locations = viewModel.Locations.Where(s => s.City.CityName.Contains(searchString)

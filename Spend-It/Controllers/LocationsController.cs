@@ -49,22 +49,21 @@ namespace Spend_It.Controllers
                     .ThenInclude(i => i.PaymentType)
                   .Include(i => i.PaymentTypeLocations)
                     .ThenInclude(i => i.Location)
-                  .OrderBy(i => i.City.CityName)
                   .ToListAsync();
 
             switch (sortOrder)
             {
                 case "name_desc":
-                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.LocationName).ToList();
+                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.LocationName);
                     break;
                 case "CityName":
-                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.City.CityName).ToList();
+                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.City.CityName);
                     break;
                 case "CityName_desc":
-                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.City.CityName).ToList();
+                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.City.CityName);
                     break;
                 default:
-                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.LocationName).ToList();
+                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.LocationName);
                     break;
             }
 
