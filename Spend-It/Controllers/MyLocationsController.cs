@@ -27,8 +27,18 @@ namespace Spend_It.Controllers
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         //GET Locations the signed in user has created
-        public async Task<IActionResult> Index(int? id)
+        public async Task<IActionResult> Index(
+            int? id,
+            string sortOrder,
+            string searchString)
         {
+
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["CitySortParm"] = String.IsNullOrEmpty(sortOrder) ? "CityName_desc" : "CityName";
+
+
             var currentUser = await GetCurrentUserAsync();
             var viewModel = new PaymentTypeLocationData();
             viewModel.Locations = await _context.Locations
@@ -39,9 +49,26 @@ namespace Spend_It.Controllers
                   .Include(i => i.PaymentTypeLocations)
                     .ThenInclude(i => i.Location)
                   .Where(l => l.UserId == currentUser.Id)
-                  .OrderBy(i => i.LocationName)
+                   .ToListAsync();
 
-                  .ToListAsync();
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.LocationName);
+                    break;
+                case "CityName":
+                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.City.CityName);
+                    break;
+                case "CityName_desc":
+                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.City.CityName);
+                    break;
+                default:
+                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.City.CityName);
+                    break;
+            }
+
+
+
 
             if (id != null)
             {
@@ -49,6 +76,13 @@ namespace Spend_It.Controllers
                 Location location = viewModel.Locations.Where(
                     i => i.LocationId == id.Value).Single();
                 viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
+            }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                viewModel.Locations = viewModel.Locations.Where(s => s.City.CityName.Contains(searchString)
+                                       || s.City.CityName.Contains(searchString) || s.Description.Contains(searchString)).ToList();
+
             }
 
             return View(viewModel);

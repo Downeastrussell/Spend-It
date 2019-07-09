@@ -9,15 +9,32 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Search by City or Description: <input type="text" name="searchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>Date Created</th>
-            <th>Name of Establishment</th>
+
+            <th> <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Name of Establishment</a></th>
+
             <th>Type of Establishment</th>
-            <th>City</th>
+
+            <th>Street Address</th>
+
+            <th> <a asp-action="Index" asp-route-sortOrder="@ViewData["CitySortParm"]">City</a></th>
+
             <th>Payment Types Accepted</th>
-         
+
+
         </tr>
     </thead>
     <tbody>
@@ -39,8 +56,12 @@
                 @Html.DisplayFor(modelItem => item.LocationType.LocationTypeName)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.StreetAddress)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.City.CityName)
             </td>
+
             <td>
                 @{
                     foreach (var paymentType in item.PaymentTypeLocations)
