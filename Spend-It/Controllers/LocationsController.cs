@@ -27,10 +27,20 @@ namespace Spend_It.Controllers
 
 
         // GET: All Locations from every user
-        public async Task<IActionResult> Index(int? id)
+        public async Task<IActionResult> Index(
+            int? id,
+            string sortOrder,
+            string searchString)
+            //string currentFilter,
+            //int? pageNumber)
         {
 
- 
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";           
+            ViewData["CitySortParm"] = String.IsNullOrEmpty(sortOrder) ? "CityName_desc" : "CityName";
+
+
             var viewModel = new PaymentTypeLocationData();
             viewModel.Locations = await _context.Locations
                   .Include(i => i.City)
@@ -39,9 +49,25 @@ namespace Spend_It.Controllers
                     .ThenInclude(i => i.PaymentType)
                   .Include(i => i.PaymentTypeLocations)
                     .ThenInclude(i => i.Location)
-                  .OrderBy(i => i.City)
-
+                  .OrderBy(i => i.City.CityName)
                   .ToListAsync();
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.LocationName).ToList();
+                    break;
+                case "CityName":
+                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.City.CityName).ToList();
+                    break;
+                case "CityName_desc":
+                    viewModel.Locations = viewModel.Locations.OrderByDescending(s => s.City.CityName).ToList();
+                    break;
+                default:
+                    viewModel.Locations = viewModel.Locations.OrderBy(s => s.LocationName).ToList();
+                    break;
+            }
+
 
             if (id != null)
             {
@@ -51,39 +77,17 @@ namespace Spend_It.Controllers
                 viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
             }
 
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                viewModel.Locations = viewModel.Locations.Where(s => s.City.CityName.Contains(searchString)
+                                       || s.City.CityName.Contains(searchString) || s.Description.Contains(searchString)).ToList();
+
+            }
+
             return View(viewModel);
+
         }
 
-
-        //Add to "Saved Locations" (thanks to Sable Bowen!!!)
-        [HttpGet]
-        [ValidateAntiForgeryToken]
-
-        public async Task<IActionResult> AddToSavedLocations(int id)
-        {
-
-            //Gets user, products in cart, and the currently open order
-            var currentUser = await GetCurrentUserAsync();
-
-
-            var location = await _context.Locations.FirstOrDefaultAsync(p => p.LocationId == id);
-
-            //IEnumerable<SavedLocation> locations = await _context.SavedLocations.Where(o => o.UserId == currentUser.Id).ToListAsync();
-
-    
-                SavedLocation saved = new SavedLocation()
-                {
-                    LocationId = id,
-                    UserId = currentUser.Id
-                };
-                _context.Add(saved);
-                await _context.SaveChangesAsync();
-
-
-         
-
-            return View(location);
-        }
 
 
 
