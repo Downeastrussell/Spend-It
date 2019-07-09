@@ -22,7 +22,9 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Date Created</th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]">Date Created</a>
+            </th>
 
             <th> <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Name of Establishment</a></th>
 

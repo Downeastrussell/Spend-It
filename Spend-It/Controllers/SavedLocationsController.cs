@@ -27,13 +27,21 @@ namespace Spend_It.Controllers
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         // GET: SavedLocations
-        public async Task<IActionResult> Index(int? id)
+        public async Task<IActionResult> Index(
+            int? id,
+              string sortOrder,
+            string searchString
+            )
         {
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["CitySortParm"] = String.IsNullOrEmpty(sortOrder) ? "CityName_desc" : "CityName";
+
+
             var currentUser = await GetCurrentUserAsync();
             var viewModel = new SavedLocationIndexData();
-  
-
-            viewModel.SavedLocations = await _context.SavedLocations
+                viewModel.SavedLocations = await _context.SavedLocations
                 .Include(s => s.Location)
                 .Include(s => s.User)
                 .Include(s => s.Location.City)
@@ -45,13 +53,36 @@ namespace Spend_It.Controllers
                 .Where(l => l.UserId == currentUser.Id)
                 .ToListAsync();
 
-            if (id != null)
+            switch (sortOrder)
             {
-                ViewData["LocationId"] = id.Value;
-                SavedLocation location = viewModel.SavedLocations.Where(
-                   i => i.LocationId == id.Value).Single();
-                //viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
+                case "name_desc":
+                    viewModel.SavedLocations = viewModel.SavedLocations.OrderByDescending(s => s.Location.LocationName);
+                    break;
+                case "CityName":
+                    viewModel.SavedLocations = viewModel.SavedLocations.OrderBy(s => s.Location.City.CityName);
+                    break;
+                case "CityName_desc":
+                    viewModel.SavedLocations = viewModel.SavedLocations.OrderByDescending(s => s.Location.City.CityName);
+                    break;
+                default:
+                    viewModel.SavedLocations = viewModel.SavedLocations.OrderBy(s => s.Location.LocationName);
+                    break;
             }
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                viewModel.Locations = viewModel.Locations.Where(s => s.City.CityName.Contains(searchString)
+                                       || s.City.CityName.Contains(searchString) || s.Description.Contains(searchString)).ToList();
+
+            }
+
+            //if (id != null)
+            //{
+            //    ViewData["LocationId"] = id.Value;
+            //    SavedLocation location = viewModel.SavedLocations.Where(
+            //       i => i.LocationId == id.Value).Single();
+            //    //viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
+            //}
 
             return View(viewModel);
         }
@@ -80,63 +111,12 @@ namespace Spend_It.Controllers
         public async Task<IActionResult> Create(int? id)
         {
             {
-
-                //Gets user, products in cart, and the currently open order
-                //var currentUser = await GetCurrentUserAsync();
-
-                //SavedLocation savedLocation = await _context.SavedLocations
-                //    .Include(s => s.Location)
-                //    .Include(u => u.User)
-                //    .FirstOrDefaultAsync(l => l.Location.LocationId == id);
-
-
-                //var applicationDbContext = _context.SavedLocations.Include(p => p.User)
-                //    .Include(p => p.Location)
-                //    .Where(p => p.LocationId == id && p.UserId == currentUser.Id);
-                //return View(await applicationDbContext.ToListAsync());
-
-                //if (id == null)
-                //{
-                //    return NotFound();
-                //}
-                //var currentUser = await GetCurrentUserAsync();
-                //var savedLocation = await _context.SavedLocations
-                //    .Include(p => p.User)
-                //    .Where(p => p.UserId == currentUser.Id)
-                //    .Include(l => l.LocationId)
-                //    .FirstOrDefaultAsync(m => m.LocationId == id);
-                //if (savedLocation == null)
-                //{
-                //    return NotFound();
-                //}
-
-                //return View(savedLocation);
-
-                //.Include(s => s.Location)
-                //.Include(u => u.User)
                 var currentUser = await GetCurrentUserAsync();
 
                 ViewData["LocationId"] = id;
                 ViewData["UserId"] = currentUser.Id;
                 
                 return View();
-
-
-
-
-
-
-                //SavedLocation saved = new SavedLocation()
-                //{
-                //    LocationId = savedLocation.LocationId,
-                //    UserId = currentUser.Id
-                //};
-
-
-
-
-
-                //return View(savedLocation);
 
             }
            
@@ -226,10 +206,10 @@ namespace Spend_It.Controllers
         // GET: SavedLocations/Delete/5
         public async Task<IActionResult> Delete(SavedLocation savedLocation1, int id)
         {
-            //if (id == null)
-            //{
-            //    return NotFound();
-            //}
+            if (id == null)
+            {
+                return NotFound();
+            }
 
             var savedLocation = await _context.SavedLocations
                 .Include(s => s.Location)
