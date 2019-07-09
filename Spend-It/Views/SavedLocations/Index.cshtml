@@ -7,13 +7,23 @@
 
 <h2>Your Saved Locations</h2>
 
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Search by City or Description: <input type="text" name="searchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
-            <th>Name of Establishment</th>
+            <th> <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Name of Establishment</a></th>
             <th>Type of Establishment</th>
             <th>Street Address</th>
-            <th>City</th>
+            <th> <a asp-action="Index" asp-route-sortOrder="@ViewData["CitySortParm"]">City</a></th>
             <th>Payment Types Accepted</th>
 
         </tr>
