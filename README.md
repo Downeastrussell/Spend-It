@@ -16,6 +16,9 @@ login to add their own recommendations. Recommendations can be edited or deleted
 can add a neighborhood if they would like, or they can just choose 'Other' in the 'Neighborhood' drop-down in the create form. 
 There are three categories of recommendations that the user can choose from while creating recommendations.
 
+![alt text](https://raw.githubusercontent.com/downeastrussell/Spend_It/production-1.0/path/to/img.png)
+
+
 One of the best features of this app is that the user can search all recommendations by neighborhood. So if a user finds themselves
 in a particular neighborhood and isn't sure where to go next, the user can check the app and easily locate all the recommendations
 in their current neighborhood, whether it be live music, comedy or coffee.
