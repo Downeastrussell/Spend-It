@@ -6,19 +6,18 @@ A simple ASP.NET Core 2.2 MVC web applications using Entity Framework (EF) Core.
 The app allows you to search and locate Businesses that accept cryptocurrency as pament.
 
 Check out Spend-It at https://spendit.com
-
-Spend-It allows users to search for locations that accept cryptocurrency(only avaliable in select city's). 
-
+Spend-It allows users to search for locations that accept cryptocurrency(*Only avaliable in select City's) 
+![image](https://github.com/Downeastrussell/Spend-It/blob/master/Spend-It/wwwroot/Pictures/SpendIt.png)
 
 About Spend-It:
-A user can view a list of all recommendations immediately upon visiting the site. If the user would like, they can register and 
-login to add their own recommendations. Recommendations can be edited or deleted, but only by the user who created them. A user 
-can add a neighborhood if they would like, or they can just choose 'Other' in the 'Neighborhood' drop-down in the create form. 
-There are three categories of recommendations that the user can choose from while creating recommendations.
+A user can view a list of all Locations immediately upon visiting the site.
+Locations can be sorted or searched by city, location type, location name, or search the short description for each location.
+![image](https://github.com/Downeastrussell/Spend-It/blob/master/Spend-It/wwwroot/Pictures/Home.png)
 
-One of the best features of this app is that the user can search all recommendations by neighborhood. So if a user finds themselves
-in a particular neighborhood and isn't sure where to go next, the user can check the app and easily locate all the recommendations
-in their current neighborhood, whether it be live music, comedy or coffee.
+If the user would like, they can register and login to add their own Locations or save Locations that other users have created. Locations can be edited or deleted, but only by the user who created them. 
+![image](https://github.com/Downeastrussell/Spend-It/blob/master/Spend-It/wwwroot/Pictures/Create.jpg)
+
+One of the best features of this app is that the user can search all Locations by City. So if a user finds themselves in a particular City and isn't sure where they can spend their Cryptocurrency, the user can check the app and easily locate all the Businesses in their current City, whether it be hotels, restaurants or grocery stores.
 
 Technologies:
 C#/ASP.NET w/Entity and Identity
