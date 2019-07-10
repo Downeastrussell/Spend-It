@@ -134,7 +134,7 @@ namespace Spend_It.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LocationId,DateCreated,Description,LocationName,StreetAddress,UserId,CityId,LocationTypeId, PaymentTypeLocation")] Location location, string[] selectedPaymentTypes)
+        public async Task<IActionResult> Create([Bind("LocationId,DateCreated,Description,LocationName,StreetAddress,UserId,CityId,LocationTypeId, WebsiteURL, PaymentTypeLocation")] Location location, string[] selectedPaymentTypes)
         {
             {
                 location.PaymentTypeLocations = new List<PaymentTypeLocation>();
