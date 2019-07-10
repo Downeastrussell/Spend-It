@@ -28,18 +28,25 @@ namespace Spend_It.Controllers
 
         // GET: All Locations from every user
         public async Task<IActionResult> Index(
-            int? id,
-            string sortOrder,
-            string searchString)
-            //string currentFilter,
-            //int? pageNumber)
+             string sortOrder,
+             string currentFilter,
+             string searchString,
+             int? pageNumber)
         {
 
-            ViewData["CurrentSort"] = sortOrder;
-            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentSort"] = sortOrder;       
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";           
             ViewData["CitySortParm"] = String.IsNullOrEmpty(sortOrder) ? "CityName_desc" : "CityName";
 
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewData["CurrentFilter"] = searchString;
 
             var viewModel = new PaymentTypeLocationData();
             viewModel.Locations = await _context.Locations
@@ -68,14 +75,6 @@ namespace Spend_It.Controllers
             }
 
 
-            //if (id != null)
-            //{
-            //    ViewData["LocationId"] = id.Value;
-            //    Location location = viewModel.Locations.Where(
-            //        i => i.LocationId == id.Value).Single();
-            //    viewModel.PaymentTypes = location.PaymentTypeLocations.Select(s => s.PaymentType);
-            //}
-
             if (!String.IsNullOrEmpty(searchString))
             {
                 viewModel.Locations = viewModel.Locations.Where(s => s.City.CityName.Contains(searchString)
@@ -86,9 +85,6 @@ namespace Spend_It.Controllers
             return View(viewModel);
 
         }
-
-
-
 
         // GET: Locations/Details/5
         public async Task<IActionResult> Details(int? id)

@@ -9,7 +9,7 @@
 <div>
     <h4>SavedLocation</h4>
     <hr />
-    <dl class="row">
+    <dl class="spinner-border-lg">
         <dt>
             @Html.DisplayNameFor(model => model.Location.LocationName)
         </dt>
@@ -21,6 +21,12 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Location.Description)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Location.WebsiteURL)
+        </dt>
+        <dd>
+            <a href="http://@Model.Location.WebsiteURL">http://@Model.Location.WebsiteURL</a>
         </dd>
     </dl>
 </div>

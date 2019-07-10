@@ -34,6 +34,10 @@ namespace Spend_It.Models
         public string StreetAddress { get; set; }
 
         [Required]
+        [Display(Name = "Website")]
+        public string WebsiteURL { get; set; }
+
+        [Required]
         public string UserId { get; set; }
 
    

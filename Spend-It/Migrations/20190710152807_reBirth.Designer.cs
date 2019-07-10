@@ -10,8 +10,8 @@ using Spend_It.Data;
 namespace Spend_It.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190707172434_savedocations")]
-    partial class savedocations
+    [Migration("20190710152807_reBirth")]
+    partial class reBirth
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -235,6 +235,9 @@ namespace Spend_It.Migrations
                     b.Property<string>("UserId")
                         .IsRequired();
 
+                    b.Property<string>("WebsiteURL")
+                        .IsRequired();
+
                     b.HasKey("LocationId");
 
                     b.HasIndex("CityId");
@@ -297,11 +300,9 @@ namespace Spend_It.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("LocationId");
+                    b.Property<int>("LocationId");
 
                     b.Property<string>("UserId");
-
-                    b.Property<int>("savedLocationId");
 
                     b.HasKey("SavedLocationId");
 
@@ -391,8 +392,9 @@ namespace Spend_It.Migrations
             modelBuilder.Entity("Spend_It.Models.SavedLocation", b =>
                 {
                     b.HasOne("Spend_It.Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId");
+                        .WithMany("SavedLocations")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Spend_It.Models.ApplicationUser", "User")
                         .WithMany("SavedLocations")

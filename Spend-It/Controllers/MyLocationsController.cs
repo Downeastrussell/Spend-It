@@ -28,7 +28,7 @@ namespace Spend_It.Controllers
 
         //GET Locations the signed in user has created
         public async Task<IActionResult> Index(
-            int? id,
+            //int? id,
             string sortOrder,
             string searchString)
         {
@@ -134,7 +134,7 @@ namespace Spend_It.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LocationId,DateCreated,Description,LocationName,StreetAddress,UserId,CityId,LocationTypeId, PaymentTypeLocation")] Location location, string[] selectedPaymentTypes)
+        public async Task<IActionResult> Create([Bind("LocationId,DateCreated,Description,LocationName,StreetAddress,UserId,CityId,LocationTypeId, WebsiteURL, PaymentTypeLocation")] Location location, string[] selectedPaymentTypes)
         {
             {
                 location.PaymentTypeLocations = new List<PaymentTypeLocation>();
@@ -297,11 +297,6 @@ namespace Spend_It.Controllers
             }
             ViewData["PaymentTypes"] = viewModel;
         }
-
-
-
-
-
 
         // GET: MyLocations/Delete/5
         public async Task<IActionResult> Delete(int? id)

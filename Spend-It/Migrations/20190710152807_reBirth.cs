@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Spend_It.Migrations
 {
-    public partial class nukedIt : Migration
+    public partial class reBirth : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -68,8 +68,7 @@ namespace Spend_It.Migrations
                 {
                     LocationTypeId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    LocationTypeName = table.Column<string>(maxLength: 55, nullable: false),
-                    sneakyStuff = table.Column<string>(nullable: true)
+                    LocationTypeName = table.Column<string>(maxLength: 55, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -206,6 +205,7 @@ namespace Spend_It.Migrations
                     Description = table.Column<string>(maxLength: 255, nullable: false),
                     LocationName = table.Column<string>(maxLength: 55, nullable: false),
                     StreetAddress = table.Column<string>(nullable: false),
+                    WebsiteURL = table.Column<string>(nullable: false),
                     UserId = table.Column<string>(nullable: false),
                     CityId = table.Column<int>(nullable: false),
                     LocationTypeId = table.Column<int>(nullable: false)

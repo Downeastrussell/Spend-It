@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\Migrations\20190628172805_updatedDBinit.cs" />
-    <Compile Remove="Data\Migrations\20190628172805_updatedDBinit.Designer.cs" />
-    <Compile Remove="Data\Migrations\20190628174217_test.cs" />
-    <Compile Remove="Data\Migrations\20190628174217_test.Designer.cs" />
+    <Compile Remove="Data\Migrations\**" />
+    <Content Remove="Data\Migrations\**" />
+    <EmbeddedResource Remove="Data\Migrations\**" />
+    <None Remove="Data\Migrations\**" />
   </ItemGroup>
 
 
@@ -26,7 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Migrations\" />
+    <Folder Include="wwwroot\Pictures\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Pictures\bitcoin-cryptocurrency-digital-currency-symbol-blue-on-white-MXI31025.jpg" />
+    <None Include="wwwroot\Pictures\bitcoin-digital-currency-coin-damage-260nw-678498553.jpg" />
+    <None Include="wwwroot\Pictures\virtual-bitcoin-dollar-icon-deal-handshake-concept-flat-cartoon-illustration-PJR661.jpg" />
   </ItemGroup>
 
 </Project>
