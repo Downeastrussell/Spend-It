@@ -9,7 +9,6 @@ Check out Spend-It at https://spendit.com
 Spend-It allows users to search for locations that accept cryptocurrency(*Only avaliable in select City's) 
 ![image](https://github.com/Downeastrussell/Spend-It/blob/master/Spend-It/wwwroot/Pictures/SpendIt.png)
 
-About Spend-It:
 A user can view a list of all Locations immediately upon visiting the site.
 Locations can be sorted or searched by city, location type, location name, or search the short description for each location.
 ![image](https://github.com/Downeastrussell/Spend-It/blob/master/Spend-It/wwwroot/Pictures/Home.png)
