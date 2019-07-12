@@ -5,7 +5,6 @@ A simple ASP.NET Core 2.2 MVC web applications using Entity Framework (EF) Core.
 
 The app allows you to search and locate Businesses that accept cryptocurrency as pament.
 
-Check out Spend-It at https://spendit.com
 Spend-It allows users to search for locations that accept cryptocurrency(*Only avaliable in select City's) 
 ![image](https://github.com/Downeastrussell/Spend-It/blob/master/Spend-It/wwwroot/Pictures/SpendIt.png)
 
@@ -19,9 +18,8 @@ If the user would like, they can register and login to add their own Locations o
 One of the best features of this app is that the user can search all Locations by City. So if a user finds themselves in a particular City and isn't sure where they can spend their Cryptocurrency, the user can check the app and easily locate all the Businesses in their current City, whether it be hotels, restaurants or grocery stores.
 
 Technologies:
-C#/ASP.NET w/Entity and Identity
+C#/ASP.NET w/Entity Framework and Identity
 
-This site is live at: https://spendit.com
 
 TO GET THIS PROJECT-
 Requirements: Microsoft.NET Framework and Visual Studio
